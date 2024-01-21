@@ -58,15 +58,17 @@ def fetch_last_expense_email():
             email_message = email.message_from_bytes(raw_email)
             return get_email_body(email_message)
         else:
-            print("No matching emails found.")
+            return None
     except Exception as e:
         raise Exception(e)
     finally:
         mail.logout()
 
 
-if __name__ == "__main__":
+def main():
     notification = fetch_last_expense_email()
+    if not isinstance(notification, str):
+        return
     template = """Tu labor es regañarme cuando gaste mucho dinero, vas a recibir el contenido de 
     las notificaciones de mi banco cuando gasto con mi tarjeta, si ves que he
     gastado mas de {max_gasto} debes molestarte conmigo y debes ser ofensivo como un general del ejercito, 
@@ -86,3 +88,6 @@ if __name__ == "__main__":
     )
     url = f"https://api.telegram.org/bot{os.environ.get('T_TOKEN')}/sendMessage?chat_id={os.environ.get('CHAT_ID')}&text={response.content}"
     requests.get(url)
+
+if __name__ == "__main__":
+    main()
